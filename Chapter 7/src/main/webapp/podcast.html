@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en" ng-app="app">
+  <head>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.5/angular-resource.js"></script>
+ </head>
+    <meta charset="utf-8">
+    <title>Podcast App</title>
+  
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+   
+    <link href="http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,400,600" rel="stylesheet">
+    <link href="./css/font-awesome.min.css" rel="stylesheet">
+    
+   
+    <link href="./css/base-admin-3.css" rel="stylesheet">
+
+<script>
+var app = angular.module('app', []);
+	    
+	    angular.module('app').controller("PodcastController",['$scope', '$http', '$window', function($scope, $http, $window){
+	    	$scope.podcast = {};
+	    	
+	    	$scope.getPodcasts = function() {             
+		        url = "http://localhost:8080/lab7/rest/podcasts";
+		        $http({method: 'GET', url: url}).
+		              success(function(data, status, headers, config) {
+		                   $scope.podcastsList = data;
+		              }).
+		              error(function(data, status, headers, config) {
+		                    $scope.apps = data || "Request failed";
+		                    $scope.status = status;
+		              });
+		    };
+		    
+VIEW PODCAST
+
+	    	
+	    	$scope.viewPodcast = function(id) {
+	    	    
+	    	    		url = "http://localhost:8080/lab7/rest/podcasts/" + id ;
+	    	    		console.log(url);
+	    	    		$http({method: 'GET', url: url}).
+	    	    		success(function(data, status, headers, config) {
+	    	    			$scope.podcast = data;
+	    	    		}).
+	    	    		error(function(data, status, headers, config) {
+	    	    			$scope.apps = data || "Request failed";
+	    	    			$scope.status = status;
+	    	    		});
+	    	    		
+	    	    		
+	         }
+DELETE PODCAST
+
+	    	$scope.deletePodcast = function(id) {
+	    	    
+	    		url = "http://localhost:8080/lab7/rest/podcasts/" + id ;
+	    		console.log(url);
+	    		$http({method: 'DELETE', url: url}).
+	    		success(function(data, status, headers, config) {
+	    			$scope.podcast = data;
+	    		}).
+	    		error(function(data, status, headers, config) {
+	    			$scope.apps = data || "Request failed";
+	    			$scope.status = status;
+	    		});
+	    		
+	    		$window.location.reload();
+     		}
+	    	
+	    	
+	    	$scope.submitForm = function(){
+	    		$http({
+	    	          method  : 'POST',
+	    	          url     : 'http://localhost:8080/lab7/rest/podcasts',
+	    	          data    : $scope.podcast, //forms podcast object
+	    	          headers : {'Content-Type': 'application/json'} 
+	    	         }).
+	    	         success(function(data, status, headers, config) {
+	 	    			$scope.podcast = data;
+	 	    		}).
+	 	    		error(function(data, status, headers, config) {
+	 	    			$scope.apps = data || "Request failed";
+	 	    			$scope.status = status;
+	 	    		});
+	    		$window.location.reload();
+	    	}
+UPDATE PODCAST
+
+	    	$scope.updatePodcast = function(id){
+	    		$http({
+	    	          method  : 'PUT',
+	    	          url     : 'http://localhost:8080/lab7/rest/podcasts/' + id,
+	    	          data    : $scope.podcast, //forms podcast object
+	    	          headers : {'Content-Type': 'application/json'} 
+	    	         }).
+	    	         success(function(data, status, headers, config) {
+	 	    			$scope.podcast = data;
+	 	    		}).
+	 	    		error(function(data, status, headers, config) {
+	 	    			$scope.apps = data || "Request failed";
+	 	    			$scope.status = status;
+	 	    		});
+	    		$window.location.reload();
+	    	}
+SEARCH PODCAST
+
+	    	$scope.searchPodcast = function(){
+	    		url = "http://localhost:8080/lab7/rest/podcasts/search?title=" + $scope.searchVal;
+	    		console.log(url);
+	    		$http({method: 'GET', url: url}).
+	    		success(function(data, status, headers, config) {
+	    			$scope.podcastsList = data;
+	    		}).
+	    		error(function(data, status, headers, config) {
+	    			$scope.apps = data || "Request failed";
+	    			$scope.status = status;
+	    		});
+	    		
+	    		
+	    	}
+
+	    }]);
+
+</script>
+
+</head>
+
+
+
+<body  ng-controller="PodcastController"> 
+
+ <div class="container">
+      <div class="row"> 	
+      	<div class="col-md-12">	
+      		<div class="widget stacked widget-table">			
+					<div class="widget-header">
+						<h3>Podcasts</h3>
+						 
+					</div> <!-- .widget-header -->	
+					<div class="widget-content">
+						<table class="table table-bordered table-striped">		
+							<thead>							
+								<th>Title</th>
+								<th>Link</th>
+								<th>Description</th>
+								<th>Feed</th>
+								<th style="border:0px">Actions 
+								
+									<form class="navbar-form navbar-center">
+      									<div class="form-group">
+        									<input type="text"  class="form-control input-sm search-query" placeholder="Search">
+      									</div>
+      									&nbsp;&nbsp;&nbsp;&nbsp;
+      									<button type="submit" class="btn btn-success" > Add </button>
+      									
+    					  			</form>								
+								</th>
+							</thead>
+						
+								<tr>
+						   
+							<td class="description">Sample Title</td>
+							<td class="description">Sample Link</td>
+							<td class="description">Sample Description</td>
+							<td class="description">Sample feed</td>
+							<td class="description">
+							<button type="submit" class="btn btn-success">View</button>
+							<button type="submit" class="btn btn-success">Delete</button>
+							<button type="submit" class="btn btn-success">Edit</button>
+							</td>
+						</tr>
+						<tbody>
+							
+						<tr>
+						   <tr ng-repeat="podcast in podcastsList" >
+							<td class="description">{{podcast.title}}</td>
+							<td class="description">{{podcast.link}}</td>
+							<td class="description">{{podcast.description}}</td>
+							<td class="description">{{podcast.feed}}</td>
+							<td class="description">
+							<button type="submit" class="btn btn-success">View</button>
+							<button type="submit" class="btn btn-success">Delete</button>
+							<button type="submit" class="btn btn-success">Edit</button>
+							</td>
+						</tr>
+						
+					</tbody></table>
+						
+					</div> <!-- .widget-content -->
+					
+				</div> <!-- /widget -->	
+      			
+  			</div> <!-- /col-md-12 -->
+  		</div> <!-- /row -->	
+  	</div> <!-- /container -->		
+</div> <!-- /main -->
+
+</body>
+</html>
